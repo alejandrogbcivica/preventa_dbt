@@ -1,0 +1,51 @@
+version: 2
+
+sources:
+  - name: google_sheets
+    description: Datos extraidos desde Google Sheets
+    schema: google_sheets # this is the schema our raw data lives in
+    database: |  
+        {%- if  target.name == 'user_dev' -%} demo_bronze_db
+        {%- elif target.name == 'ci' -%} demo_bronze_db
+        {%- elif target.name == 'pro'-%} pro_bronze_db
+        {%- else -%} {{target.database}}_bronze_db
+        {%- endif -%}
+      
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness: # default freshness
+      warn_after: {count: 12, period: hour}
+      error_after: {count: 24, period: hour}
+
+    loaded_at_field: _fivetran_synced
+
+    tables:
+      - name: budget
+        description: >
+            Tabla Snapshoot del stock de almacén a final de mes
+        columns:
+          - name: _row
+            description: >
+                Identificador de la columna
+          - name: quantity
+            description: >
+                Cantidad del producto
+            test:
+              - positive_values
+          - name: month
+            description: >
+                Mes del snapshoot
+          - name: product_id
+            tests:
+              - not_null
+              - relationships:
+                  to: source('sql_server_dbo','products')
+                  field: product_id          
+            description: >
+                Id del producto. Enlaza con la tabla products
+          - name: _fivetran_synced
+            description: ""
