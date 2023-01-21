@@ -1,0 +1,261 @@
+version: 2
+
+sources:
+  - name: postgres_public
+    description: >
+        Datos extraidos desde Postgres (Heroku). Datos de eventos de nuestra E-Commerce Page   
+    schema: postgres_public # this is the schema our raw data lives in
+    database: |  
+        {%- if  target.name == 'user_dev' -%} demo_bronze_db
+        {%- elif target.name == 'ci' -%} demo_bronze_db
+        {%- elif target.name == 'pro'-%} pro_bronze_db
+        {%- else -%} {{target.database}}_bronze_db
+        {%- endif -%}
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness: # default freshness
+      warn_after: {count: 12, period: hour}
+      error_after: {count: 24, period: hour}
+
+    loaded_at_field: _fivetran_synced
+
+    tables:
+      - name: addresses
+        description: "Tabla de direcciones. Tanto clientes como pedidos"
+        columns:
+          - name: address_id
+            description: >
+                Id de la dirección, tanto del pedido como del cliente.            
+            tests:
+              - not_null
+              - unique
+          - name: country
+            description: >
+                País del pedido            
+            tests:
+              - not_null            
+          - name: zipcode
+            description: >
+                Código postal
+            tests:
+              - not_null            
+          - name: address
+            description: >
+                Dirección
+            tests:
+              - not_null
+          - name: state
+            description: >
+                Estado (el equivalente a Comunidad Autónoma)
+            tests:
+              - not_null            
+          - name: _fivetran_deleted
+            description: ""
+          - name: _fivetran_synced
+            description: ""
+
+      - name: order_items
+        description: >
+            Artículos que van en un pedido con las cantidades
+        columns:
+          - name: order_id       
+            description: >
+                Id del pedido al que van asociados los artículos
+            tests:
+              - not_null
+              - relationships:
+                  to: source('sql_server_dbo','orders')
+                  field: order_id        
+          - name: product_id
+            description: >
+                Id del producto que va en el pedido
+            tests:
+              - not_null
+              - relationships:
+                  to: source('sql_server_dbo','products')
+                  field: product_id            
+          - name: quantity
+            description: >
+                Cantidad de ese producto que va en el pedido
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"             
+          - name: _fivetran_deleted
+            description: ""
+          - name: _fivetran_synced
+            description: ""
+
+      - name: orders
+        description: >
+            Listado de pedidos. Totales, usuario, promo, fechas entrega, agencia transportes, ...
+        columns:
+          - name: order_id
+            description: >
+                Id del pedido
+            tests:
+              - unique
+              - not_null
+          - name: promo_id
+            description: >
+                Id de la promo asociada al pedido. Como viene en varchar hay que convertirlo a clave primaria con md5. Antes los vacíos los convierto en null
+                Relacionado con Promos.Promo_id
+          - name: order_cost
+            description: >
+                Coste del pedido
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"			            
+          - name: created_at
+            description: >
+                Fecha del pedido. Hay que hacer un cast para convertir el texto en fecha
+          - name: tracking_id
+            description: >
+                Tracking del pedido
+          - name: address_id
+            description: >
+                Dirección de envío del pedido.
+                Relacionado con Addresses.Address_id
+            tests:
+              - not_null
+              - relationships:
+                  to: source('sql_server_dbo','addresses')
+                  field: address_id            
+          - name: delivered_at
+            description: >
+                Fecha de envío del pedido. Hay que hacer un cast para convertir el texto en fecha
+          - name: status
+            description: >
+                Estado del pedido. En preparación, enviado, entregado,...
+          - name: shipping_cost
+            description: >
+                Coste del envío del pedido
+          - name: user_id
+            description: >
+                ID del cliente.
+                Relacionado con USERS.User_id
+            tests:
+              - not_null
+              - relationships:
+                  to: source('sql_server_dbo','users')
+                  field: user_id            
+          - name: shipping_service
+            description: >
+                Agencia de transportes que lleva el pedido.
+          - name: order_total
+            description: >
+                Precio total del pedido (incluidos gastos de envío y descuentos). Es lo que paga el cliente.
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"			              
+          - name: estimated_delivery_at
+            description: >
+                Fecha estimada de entrega. Se hace un cast para convertir el texto en fecha
+          - name: _fivetran_deleted
+            description: ""
+          - name: _fivetran_synced
+            description: ""
+
+      - name: products
+        description: >
+            Productos de la web
+        columns:
+          - name: product_id
+            description: >
+                ID del producto
+            tests:
+              - unique
+              - not_null            
+          - name: name
+            description: >
+                Nombre del producto
+          - name: inventory
+            description: >
+                Unidades en stock del producto
+          - name: price
+            description: >
+                Precio del producto
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"		              
+          - name: _fivetran_deleted
+            description: ""
+          - name: _fivetran_synced
+            description: ""
+
+      - name: promos
+        description: >
+            Listado de promos
+        columns:
+          - name: promo_id
+            description: >
+                Id de la promo. Es un varchar. Hay que generar un md5 (en origen es un varchar, antes le quito los espacios)
+            tests:
+              - unique
+              - not_null           
+          - name: discount
+            description: >
+                Importe del descuento. En € no en %
+          - name: status
+            description: >
+                Estado en el que se encuentra la promoción. Activa, inactiva
+          - name: _fivetran_deleted
+            description: ""
+          - name: _fivetran_synced
+            description: ""
+
+      - name: users
+        description: >
+            Usuarios, con datos de contacto
+        columns:
+          - name: user_id
+            description: >
+                Id del usuario
+            tests:
+              - unique
+              - not_null          
+          - name: phone_number
+            description: >
+                Teléfono del cliente
+          - name: first_name
+            description: >
+                Nombre del cliente
+            tests:
+              - not_null           
+          - name: last_name
+            description: >
+                Apellidos del cliente
+            tests:
+              - not_null            
+          - name: created_at
+            description: >
+                Fecha de creación del cliente. Viene en varchar. Hay que hacer un cast para convertir en fecha
+          - name: address_id
+            description: >
+                Id de la dirección del cliente.
+                Referencia a Addresses.Address_id
+            tests:
+              - not_null 
+              - relationships:
+                  to: source('sql_server_dbo','addresses')
+                  field: address_id            
+          - name: updated_at
+            description: >
+                Fecha de actualización del cliente. Viene en varchar. Hay que hacer un cast para convertir en fecha
+          - name: email
+            description: >
+                Correo electrónico del cliente 
+            tests:
+              - unique
+              - not_null           
+          - name: _fivetran_deleted
+            description: ""
+          - name: _fivetran_synced
+            description: ""

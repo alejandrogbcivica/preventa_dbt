@@ -1,0 +1,66 @@
+version: 2
+
+sources:
+  - name: heroku_postgres_events
+    description: >
+        Datos extraidos desde Postgres (Heroku). Datos de eventos de nuestra E-Commerce Page   
+    schema: heroku_postgres_events # this is the schema our raw data lives in
+    database: |  
+        {%- if  target.name == 'user_dev' -%} demo_bronze_db
+        {%- elif target.name == 'ci' -%} demo_bronze_db
+        {%- elif target.name == 'pro'-%} pro_bronze_db
+        {%- else -%} {{target.database}}_bronze_db
+        {%- endif -%}
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness: # default freshness
+      warn_after: {count: 12, period: hour}
+      error_after: {count: 24, period: hour}
+
+    loaded_at_field: _fivetran_synced
+
+    tables:
+      - name: events
+        description: >
+            Eventos de la página web. Indica los productos vistos, si se añaden al carro, si se formaliza el pedido, ...
+        columns:
+          - name: event_id
+            description: >
+                Id del evento
+            tests:
+              - not_null
+              - unique            
+          - name: created_at
+            description: >
+                Fecha del evento.
+          - name: product_id
+            description: >
+                Id del producto, no aparece si se hace un checkout. 
+          - name: session_id
+            description: >
+                Id de la sesión. Una sesión es una "visita" con muchos eventos
+          - name: page_url
+            description: >
+                URL de la página visitada
+          - name: order_id
+            description: >
+                Si se hace checkout, id del pedido que genera        
+          - name: event_type
+            description: >
+                Tipo del evento. Página vista, añadir al carro, check_out,...
+          - name: user_id
+            description: >
+                Id del usuario que genera los eventos
+            tests:
+              - not_null
+              - relationships:
+                  to: source('postgres_public','users')
+                  field: user_id
+          - name: _fivetran_deleted
+            description: ""
+          - name: _fivetran_synced
+            description: ""
