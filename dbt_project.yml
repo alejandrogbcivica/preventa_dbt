@@ -32,7 +32,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   +transient: false
-  my_new_project:
+  preventa_dbt:
     # Applies to all files under models/example/
 
     staging:
@@ -40,25 +40,34 @@ models:
       +database: |  
         {%- if  target.name == 'user_dev' -%} demo_silver_db
         {%- elif target.name == 'ci' -%} demo_silver_db 
-        {%- elif target.name == 'pro'-%} demo_silver_db  
+        {%- elif target.name == 'pro'-%} demo_silver_db 
         {%- else -%} {{target.database}}_silver_db
         {%- endif -%}
 
+      google_sheets:
+        +schema: google_sheets
+      postgres_public:
+        +schema: postgres_public
+      heroku_postgres_events:
+        +schema: heroku_postgres_events
       
     marts:
       +materialized: table
       +database: |  
         {%- if  target.name == 'user_dev' -%} demo_gold_db  
         {%- elif target.name == 'ci' -%} demo_gold_db 
-        {%- elif target.name == 'pro'-%} demo_gold_db
+        {%- elif target.name == 'pro'-%} demo_gold_db 
         {%- else -%} {{target.database}}_gold_db
         {%- endif -%}
-                  
+      core:
+        +schema: core
+               
+        
 snapshots:
   +sql_header: "alter session set timezone = 'Europe/Madrid';alter session set week_start = 7;"
   +transient: false
   +target_database: |  
-        {%- if  target.name == 'user_dev' -%} demo_silver_db
+        {%- if  target.name == 'user_dev' -%} demo_silver_db 
         {%- elif target.name == 'ci' -%} demo_silver_db 
         {%- elif target.name == 'pro'-%} demo_silver_db  
         {%- else -%} {{target.database}}_silver_db
