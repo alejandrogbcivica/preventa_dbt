@@ -40,7 +40,7 @@ models:
       +database: |  
         {%- if  target.name == 'user_dev' -%} demo_silver_db
         {%- elif target.name == 'ci' -%} demo_silver_db 
-        {%- elif target.name == 'pro'-%} pro_silver_db  
+        {%- elif target.name == 'pro'-%} demo_silver_db  
         {%- else -%} {{target.database}}_silver_db
         {%- endif -%}
       google_sheets:
@@ -56,7 +56,7 @@ models:
       +database: |  
         {%- if  target.name == 'user_dev' -%} demo_gold_db  
         {%- elif target.name == 'ci' -%} demo_gold_db 
-        {%- elif target.name == 'pro'-%} pro_gold_db
+        {%- elif target.name == 'pro'-%} demo_gold_db
         {%- else -%} {{target.database}}_gold_db
         {%- endif -%}
       core:
@@ -69,7 +69,7 @@ snapshots:
   +target_database: |  
         {%- if  target.name == 'user_dev' -%} demo_silver_db
         {%- elif target.name == 'ci' -%} demo_silver_db 
-        {%- elif target.name == 'pro'-%} pro_silver_db  
+        {%- elif target.name == 'pro'-%} demo_silver_db  
         {%- else -%} {{target.database}}_silver_db
         {%- endif -%}
   +target_schema: snapshots
