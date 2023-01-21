@@ -43,12 +43,6 @@ models:
         {%- elif target.name == 'pro'-%} demo_silver_db  
         {%- else -%} {{target.database}}_silver_db
         {%- endif -%}
-      google_sheets:
-        +schema: google_sheets
-      sql_server_dbo:
-        +schema: sql_server_dbo
-      seeds:
-        +schema: seeds
 
       
     marts:
@@ -59,10 +53,7 @@ models:
         {%- elif target.name == 'pro'-%} demo_gold_db
         {%- else -%} {{target.database}}_gold_db
         {%- endif -%}
-      core:
-        +schema: core
                   
-        
 snapshots:
   +sql_header: "alter session set timezone = 'Europe/Madrid';alter session set week_start = 7;"
   +transient: false
