@@ -68,7 +68,7 @@ sources:
             tests:
               - not_null
               - relationships:
-                  to: source('sql_server_dbo','orders')
+                  to: source('postgres_public','orders')
                   field: order_id        
           - name: product_id
             description: >
@@ -76,7 +76,7 @@ sources:
             tests:
               - not_null
               - relationships:
-                  to: source('sql_server_dbo','products')
+                  to: source('postgres_public','products')
                   field: product_id            
           - name: quantity
             description: >
@@ -124,7 +124,7 @@ sources:
             tests:
               - not_null
               - relationships:
-                  to: source('sql_server_dbo','addresses')
+                  to: source('postgres_public','addresses')
                   field: address_id            
           - name: delivered_at
             description: >
@@ -142,7 +142,7 @@ sources:
             tests:
               - not_null
               - relationships:
-                  to: source('sql_server_dbo','users')
+                  to: source('postgres_public','users')
                   field: user_id            
           - name: shipping_service
             description: >
@@ -244,7 +244,7 @@ sources:
             tests:
               - not_null 
               - relationships:
-                  to: source('sql_server_dbo','addresses')
+                  to: source('postgres_public','addresses')
                   field: address_id            
           - name: updated_at
             description: >
