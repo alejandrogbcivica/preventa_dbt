@@ -24,7 +24,7 @@ sources:
     loaded_at_field: _fivetran_synced
 
     tables:
-      - name: budget_
+      - name: budget
         description: >
             Tabla Snapshoot del stock de almacén a final de mes
         columns:
