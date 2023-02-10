@@ -1,4 +1,4 @@
-{% macro drop_temporal_schema_ci_cd(enviroment) %}
+{% macro drop_temporal_schema_ci_cd(environment) %}
 
 
 {% set results %}
