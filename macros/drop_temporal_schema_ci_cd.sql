@@ -21,6 +21,6 @@ select "name" as database_name from table(result_scan(last_query_id()))
 
 {{ drop_schema(target_schema) }}
 
-{% endfor %} {{ log("Dropped schema " ~ target_schema ~ "from database "  ~ db, info = true) }}
+{% endfor %} {{ log("Dropped schema " ~ {{target_schema}} ~ "from database "  ~ db, info = true) }}
 
 {% endmacro %}
