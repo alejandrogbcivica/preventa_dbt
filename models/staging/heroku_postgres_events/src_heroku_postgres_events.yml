@@ -4,12 +4,12 @@ sources:
   - name: heroku_postgres_events
     description: >
         Datos extraidos desde Postgres (Heroku). Datos de eventos de nuestra E-Commerce Page   
-    schema: heroku_postgres_events # this is the schema our raw data lives in
     database: |  
-        {%- if  target.name == 'dev' -%} demo_bronze_db # Solo para este proyecto de DEMO (No hay entorno DEV)
-        {%- elif target.name == 'ci'-%} demo_bronze_db
-        {%- elif target.name == 'pro'-%} demo_bronze_db # Solo para este proyecto de DEMO (No hay entorno PRO)
-        {%- else -%} {{target.database}}_bronze_db
+        {%- if  target.name == 'dev' -%} dev_demo_bronze_db 
+        {%- elif target.name == 'ci/cd'-%} dev_demo_bronze_db
+        {%- elif target.name == 'pre'-%} pre_demo_bronze_db        
+        {%- elif target.name == 'pro'-%} pro_demo_bronze_db
+        {%- else -%} {{target.database}}_demo_bronze_db
         {%- endif -%}
 
     quoting:
