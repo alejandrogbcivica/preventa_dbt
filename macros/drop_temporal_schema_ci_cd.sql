@@ -1,15 +1,17 @@
 {% macro drop_temporal_schema_ci_cd(environment) %}
 
 
-{% set results %}
+{% set show_db %}
 show databases like '%{{ environment }}%'
 {% endset %}
 
-{% set show_db = run_query(results) %}
+{% set show_db = run_query(show_db) %}
 
-{% set get_db_names = run_query(
-    'select "name" as DATABASE_NAME from table(result_scan(last_query_id()))'
-) %}
+{% set name_db %}
+select "name" as database_name from table(result_scan(last_query_id()))
+{% endset %}
+
+{% set get_db_names = run_query(name_db) %}
 
 {% if execute %} {% set results_list = get_db_names.columns[0].values() %} {% endif %}
 
