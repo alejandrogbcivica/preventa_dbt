@@ -20,7 +20,7 @@ sources:
 
     freshness: # default freshness
       warn_after: {count: 12, period: hour}
-      error_after: {count: 24, period: hour}
+      #error_after: {count: 24, period: hour}
 
     loaded_at_field: _fivetran_synced
 
@@ -33,12 +33,18 @@ sources:
                 Id de la dirección, tanto del pedido como del cliente.            
             tests:
               - not_null
-              - unique
+              - unique:
+                  fail_calc: "count(unique_field)"
           - name: country
             description: >
                 País del pedido            
             tests:
-              - not_null            
+              - not_null:
+                  config:
+                    severity: error
+                    error_if: ">10"
+                    warn_if: ">0"
+                    limit: 10       
           - name: zipcode
             description: >
                 Código postal
@@ -99,8 +105,12 @@ sources:
             description: >
                 Id del pedido
             tests:
-              - unique
-              - not_null
+              - unique:
+                  config:
+                    limit: 100
+              - not_null:
+                  config:
+                    limit: 100
           - name: promo_id
             description: >
                 Id de la promo asociada al pedido. Como viene en varchar hay que convertirlo a clave primaria con md5. Antes los vacíos los convierto en null

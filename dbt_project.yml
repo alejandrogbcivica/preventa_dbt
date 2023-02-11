@@ -56,8 +56,7 @@ models:
 snapshots:
   +sql_header: "alter session set timezone = 'Europe/Madrid';alter session set week_start = 7;"
   +transient: false
-  +target_database: silver
-  +target_schema: |
-    {%- if target.name == 'ci/cd' -%} {{target.schema}}
-    {%- else -%} snapshot
-    {%- endif -%}
+
+tests:
+  +store_failures: true
+  +database: silver
