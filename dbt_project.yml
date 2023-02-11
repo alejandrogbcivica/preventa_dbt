@@ -56,8 +56,6 @@ models:
 snapshots:
   +sql_header: "alter session set timezone = 'Europe/Madrid';alter session set week_start = 7;"
   +transient: false
-  +target_database: silver
-  +target_schema: generate_schema_name('snapshots')
 
 tests:
   +store_failures: true
