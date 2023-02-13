@@ -60,4 +60,4 @@ snapshots:
 
 tests:
   +store_failures: true
-  +database: silver
+  +database: "{{env_var('DBT_DB')}}_DEMO_SILVER_DB"
