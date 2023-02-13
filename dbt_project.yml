@@ -37,7 +37,7 @@ models:
 
     staging:
       +materialized: view
-      +database: silver
+      +database: "{{env_var('DBT_DB')}}_DEMO_SILVER_DB"
 
       google_sheets:
         +schema: google_sheets
@@ -48,7 +48,7 @@ models:
       
     marts:
       +materialized: table
-      +database: gold
+      +database: "{{env_var('DBT_DB')}}_DEMO_GOLD_DB"
       core:
         +schema: core
                
@@ -56,6 +56,7 @@ models:
 snapshots:
   +sql_header: "alter session set timezone = 'Europe/Madrid';alter session set week_start = 7;"
   +transient: false
+  +target_database: "{{env_var('DBT_DB')}}_DEMO_SILVER_DB"
 
 tests:
   +store_failures: true
