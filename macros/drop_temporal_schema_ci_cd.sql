@@ -6,6 +6,6 @@
 
 {{ drop_schema(target_schema) }}
 
-{% endfor %} {{ log("Borrado schema temporal " ~ target.schema ~ " de la base de datos "  ~ target.database, info = true) }}
+{% endfor %} {{ log("Borrado schema temporal " ~ target.schema ~ " de la base de datos "  ~ db, info = true) }}
 
 {% endmacro %}
