@@ -31,6 +31,8 @@ clean-targets:         # directories to be removed by `dbt clean`
 # as tables. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 models:
+  +persist_docs:
+    columns: true
   +transient: false
   preventa_dbt:
     # Applies to all files under models/example/
@@ -51,8 +53,7 @@ models:
       +database: "{{env_var('DBT_DB')}}_DEMO_GOLD_DB"
       core:
         +schema: core
-               
-        
+                      
 snapshots:
   +sql_header: "alter session set timezone = 'Europe/Madrid';alter session set week_start = 7;"
   +transient: false
