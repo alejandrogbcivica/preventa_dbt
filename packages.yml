@@ -4,4 +4,14 @@ packages:
   - package: calogica/dbt_expectations
     version: 0.7.0
   - package: dbt-labs/dbt_utils
-    version: 0.9.2      
+    version: 0.9.2
+  - package: Montreal-Analytics/snowflake_utils
+    version: 0.5.0
+  - package: Snowflake-Labs/dbt_constraints
+    version: 0.6.0
+  - package: get-select/dbt_snowflake_monitoring
+    version: 2.0.0
+  - package: dbt-labs/audit_helper
+    version: 0.7.0
+  - package: dbt-labs/dbt_external_tables
+    version: 0.8.2
