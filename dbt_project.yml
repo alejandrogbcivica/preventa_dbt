@@ -37,7 +37,7 @@ models:
 
     staging:
       +materialized: view
-      +database: "{{env_var('DBT_DB')}}_DEMO_SILVER_DB"
+      +database: "{{env_var('DBT_ENV_SECRET_TEST')}}_DEMO_SILVER_DB"
 
       google_sheets:
         +schema: google_sheets

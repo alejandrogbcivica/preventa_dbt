@@ -26,3 +26,4 @@ addresses_renamed AS (
     )
 
 SELECT * FROM addresses_renamed
+
