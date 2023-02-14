@@ -12,3 +12,4 @@
 select * from {{ source('postgres_public', 'order_items') }}
 
 {% endsnapshot %}
+
