@@ -32,7 +32,6 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   +persist_docs:
-
     columns: true
   +transient: false
   preventa_dbt:
