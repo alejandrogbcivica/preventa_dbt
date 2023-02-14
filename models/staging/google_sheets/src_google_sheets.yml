@@ -3,8 +3,9 @@ version: 2
 sources:
   - name: google_sheets
     description: Datos extraidos desde Google Sheets
-    schema: google_sheets # this is the schema our raw data lives in
     database: "{{env_var('DBT_DB')}}_DEMO_BRONZE_DB"
+    schema: google_sheets # this is the schema our raw data lives in
+    loader: fivetran
       
 
     quoting:
