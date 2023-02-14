@@ -60,4 +60,5 @@ snapshots:
 
 tests:
   +store_failures: true
-  +database: "{{env_var('DBT_DB')}}_DEMO_SILVER_DB"
+  +database: "{{env_var('DBT_DB')}}_DEMO_BRONZE_DB"
+  +schema: testing_dbt
