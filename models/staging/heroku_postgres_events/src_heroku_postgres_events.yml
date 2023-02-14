@@ -5,6 +5,8 @@ sources:
     description: >
         Datos extraidos desde Postgres (Heroku). Datos de eventos de nuestra E-Commerce Page   
     database: "{{env_var('DBT_DB')}}_DEMO_BRONZE_DB"
+    schema: heroku_postgres_events # this is the schema our raw data lives in
+    loader: fivetran
 
     quoting:
       database: false
