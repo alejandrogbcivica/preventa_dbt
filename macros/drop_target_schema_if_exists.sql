@@ -4,9 +4,7 @@
 {{ drop_schema(target_schema) }}
 {{
     log(
-        "Borrado schema temporal " ~ target.schema ~ " de la base de datos " ~ db,
-        info=true,
-    )
+        "Borrado schema temporal " ~ target.schema ,info=true)
 }}
 {% endfor %}
 {% endmacro %}
